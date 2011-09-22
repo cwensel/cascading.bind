@@ -1,0 +1,31 @@
+/*
+ * Copyright (c) 2007-2011 Concurrent, Inc. All Rights Reserved.
+ *
+ * Project and contact information: http://www.concurrentinc.com/
+ */
+
+
+
+apply plugin: 'java'
+
+sourceSets {
+  main {
+    java.srcDir 'src/java'
+  }
+
+  test {
+    java.srcDir 'src/test'
+  }
+}
+
+repositories {
+  mavenLocal()
+  mavenCentral()
+  mavenRepo name: 'conjars', urls: 'http://conjars.org/repo/'
+}
+
+dependencies {
+  compile 'cascading:cascading-core:2.0-wip-dev'
+  compile 'cascading:cascading-hadoop:2.0-wip-dev'
+  testCompile 'cascading:cascading-test:2.0-wip-dev'
+}
