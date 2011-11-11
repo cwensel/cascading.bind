@@ -7,6 +7,7 @@
 
 
 apply plugin: 'java'
+apply plugin: 'idea'
 
 sourceSets {
   main {
@@ -25,7 +26,7 @@ repositories {
 }
 
 dependencies {
-  compile 'cascading:cascading-core:2.0-wip-dev'
-  compile 'cascading:cascading-hadoop:2.0-wip-dev'
-  testCompile 'cascading:cascading-test:2.0-wip-dev'
+  compile 'cascading:cascading-core:2.0.0-wip-+'
+  compile 'cascading:cascading-hadoop:2.0.0-wip-+'
+  testCompile 'cascading:cascading-test:2.0.0-wip-+'
 }
