@@ -1,4 +1,4 @@
-FYI, this is a work in progress (wip) branch, and only works with Cascading 2.0.0-wip releases.
+FYI, this is a work in progress (wip) branch, and only works with Cascading 2 releases.
 
 Welcome
 
