@@ -18,27 +18,19 @@
  * limitations under the License.
  */
 
+
+
 apply plugin: 'java'
 apply plugin: 'idea'
-
-sourceSets {
-  main {
-    java.srcDir 'src/java'
-  }
-
-  test {
-    java.srcDir 'src/test'
-  }
-}
 
 repositories {
   mavenLocal()
   mavenCentral()
-  mavenRepo name: 'conjars', urls: 'http://conjars.org/repo/'
+  mavenRepo name: 'conjars', url: 'http://conjars.org/repo/'
 }
 
 dependencies {
-  compile 'cascading:cascading-core:2.0.+'
-  compile 'cascading:cascading-hadoop:2.0.+'
-  testCompile 'cascading:cascading-test:2.0.+'
+  compile 'cascading:cascading-core:2.2.+'
+  compile 'cascading:cascading-hadoop:2.2.+'
+  testCompile 'cascading:cascading-platform:2.2.+'
 }
