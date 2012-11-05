@@ -79,6 +79,6 @@ public class HTTPTap extends Tap
   @Override
   public TupleEntryCollector openForWrite( FlowProcess flowProcess, Object object ) throws IOException
     {
-    return super.openForWrite( flowProcess, object );
+    return null;
     }
   }
