@@ -30,7 +30,6 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
-import cascading.bind.Resource;
 import cascading.bind.Schema;
 import cascading.bind.TapResource;
 
@@ -38,16 +37,16 @@ import cascading.bind.TapResource;
  * Class ProcessFactory is an abstract base class for creating process based factories. Where a 'process'
  * has source and sink resources as defined by {@link Schema} instances.
  *
- * @param <P> a 'process' type
- * @param <R> a resource type sub-classing {@link Resource}
+ * @param <Process>  a 'process' type
+ * @param <Resource> a resource type sub-classing {@link cascading.bind.Resource}
  * @see FlowFactory
  */
-public abstract class ProcessFactory<P, R extends TapResource> extends Factory<P>
+public abstract class ProcessFactory<Process, Resource extends TapResource> extends Factory<Process>
   {
   final Map<String, Schema> sourceSchemas = new HashMap<String, Schema>();
   final Map<String, Schema> sinkSchemas = new HashMap<String, Schema>();
-  final Map<String, List<R>> sourceResources = new HashMap<String, List<R>>();
-  final Map<String, List<R>> sinkResources = new HashMap<String, List<R>>();
+  final Map<String, List<Resource>> sourceResources = new HashMap<String, List<Resource>>();
+  final Map<String, List<Resource>> sinkResources = new HashMap<String, List<Resource>>();
 
   protected ProcessFactory( Properties properties )
     {
@@ -117,12 +116,12 @@ public abstract class ProcessFactory<P, R extends TapResource> extends Factory<P
    * @param sourceName
    * @param resources
    */
-  protected void addSourceResource( String sourceName, R... resources )
+  protected void addSourceResource( String sourceName, Resource... resources )
     {
     if( resources == null || resources.length == 0 )
       return;
 
-    List<R> resourceList = getSourceResources( sourceName );
+    List<Resource> resourceList = getSourceResources( sourceName );
 
     Collections.addAll( resourceList, resources );
 
@@ -136,13 +135,13 @@ public abstract class ProcessFactory<P, R extends TapResource> extends Factory<P
    * @param sourceName
    * @return
    */
-  protected List<R> getSourceResources( String sourceName )
+  protected List<Resource> getSourceResources( String sourceName )
     {
-    List<R> resourceList = sourceResources.get( sourceName );
+    List<Resource> resourceList = sourceResources.get( sourceName );
 
     if( resourceList == null )
       {
-      resourceList = new ArrayList<R>();
+      resourceList = new ArrayList<Resource>();
       sourceResources.put( sourceName, resourceList );
       }
 
@@ -155,17 +154,17 @@ public abstract class ProcessFactory<P, R extends TapResource> extends Factory<P
    *
    * @return Collection of Resource instances
    */
-  public Collection<R> getAllSourceResources()
+  public Collection<Resource> getAllSourceResources()
     {
-    Set<R> set = new HashSet<R>();
+    Set<Resource> set = new HashSet<Resource>();
 
-    for( List<R> resources : sourceResources.values() )
+    for( List<Resource> resources : sourceResources.values() )
       set.addAll( resources );
 
     return set;
     }
 
-  public boolean replaceSourceResource( R from, R to )
+  public boolean replaceSourceResource( Resource from, Resource to )
     {
     return replaceResourceIn( from, to, sourceResources );
     }
@@ -192,12 +191,12 @@ public abstract class ProcessFactory<P, R extends TapResource> extends Factory<P
    * @param sinkName
    * @param resources
    */
-  protected void addSinkResource( String sinkName, R... resources )
+  protected void addSinkResource( String sinkName, Resource... resources )
     {
     if( resources == null || resources.length == 0 )
       return;
 
-    List<R> resourceList = getSinkResources( sinkName );
+    List<Resource> resourceList = getSinkResources( sinkName );
 
     Collections.addAll( resourceList, resources );
 
@@ -211,13 +210,13 @@ public abstract class ProcessFactory<P, R extends TapResource> extends Factory<P
    * @param sinkName
    * @return
    */
-  protected List<R> getSinkResources( String sinkName )
+  protected List<Resource> getSinkResources( String sinkName )
     {
-    List<R> resourceList = sinkResources.get( sinkName );
+    List<Resource> resourceList = sinkResources.get( sinkName );
 
     if( resourceList == null )
       {
-      resourceList = new ArrayList<R>();
+      resourceList = new ArrayList<Resource>();
       sinkResources.put( sinkName, resourceList );
       }
 
@@ -230,17 +229,17 @@ public abstract class ProcessFactory<P, R extends TapResource> extends Factory<P
    *
    * @return Collection of Resource instances
    */
-  public Collection<R> getAllSinkResources()
+  public Collection<Resource> getAllSinkResources()
     {
-    Set<R> set = new HashSet<R>();
+    Set<Resource> set = new HashSet<Resource>();
 
-    for( List<R> resources : sinkResources.values() )
+    for( List<Resource> resources : sinkResources.values() )
       set.addAll( resources );
 
     return set;
     }
 
-  public boolean replaceSinkResource( R from, R to )
+  public boolean replaceSinkResource( Resource from, Resource to )
     {
     return replaceResourceIn( from, to, sinkResources );
     }
@@ -251,13 +250,13 @@ public abstract class ProcessFactory<P, R extends TapResource> extends Factory<P
     sinkResources.clear();
     }
 
-  private boolean replaceResourceIn( R from, R to, Map<String, List<R>> resourceMap )
+  private boolean replaceResourceIn( Resource from, Resource to, Map<String, List<Resource>> resourceMap )
     {
     boolean found = false;
 
     for( String name : resourceMap.keySet() )
       {
-      List<R> resources = resourceMap.get( name );
+      List<Resource> resources = resourceMap.get( name );
       int index = resources.indexOf( from );
 
       if( index != -1 )
@@ -274,11 +273,11 @@ public abstract class ProcessFactory<P, R extends TapResource> extends Factory<P
     return getSchemaFor( resource, sinkResources, sinkSchemas );
     }
 
-  private Schema getSchemaFor( TapResource resource, Map<String, List<R>> resources, Map<String, Schema> schemas )
+  private Schema getSchemaFor( TapResource resource, Map<String, List<Resource>> resources, Map<String, Schema> schemas )
     {
     String name = null;
 
-    for( Map.Entry<String, List<R>> entry : resources.entrySet() )
+    for( Map.Entry<String, List<Resource>> entry : resources.entrySet() )
       {
       if( !entry.getValue().contains( resource ) )
         continue;

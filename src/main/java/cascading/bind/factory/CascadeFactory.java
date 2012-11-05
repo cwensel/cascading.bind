@@ -36,11 +36,11 @@ import org.jgrapht.graph.SimpleDirectedGraph;
 /**
  *
  */
-public class CascadeFactory<R extends TapResource> extends Factory<Cascade>
+public class CascadeFactory<Resource extends TapResource> extends Factory<Cascade>
   {
   private final String name;
 
-  private SimpleDirectedGraph<R, ProcessFactoryHolder> resourceGraph = null;
+  private SimpleDirectedGraph<Resource, ProcessFactoryHolder> resourceGraph = null;
   private final List<ProcessFactory> processFactories = new ArrayList<ProcessFactory>();
 
   public static class ProcessFactoryHolder
@@ -68,13 +68,13 @@ public class CascadeFactory<R extends TapResource> extends Factory<Cascade>
     return name;
     }
 
-  public void addAllProcessFactories( Collection<ProcessFactory<?, R>> processFactories )
+  public void addAllProcessFactories( Collection<ProcessFactory<?, Resource>> processFactories )
     {
-    for( ProcessFactory<?, R> processFactory : processFactories )
+    for( ProcessFactory<?, Resource> processFactory : processFactories )
       addProcessFactory( processFactory );
     }
 
-  public void addProcessFactory( ProcessFactory<?, R> processFactory )
+  public void addProcessFactory( ProcessFactory<?, Resource> processFactory )
     {
     if( processFactories.contains( processFactory ) )
       throw new IllegalStateException( "may not add identical process factories, received: " + processFactory );
@@ -82,24 +82,24 @@ public class CascadeFactory<R extends TapResource> extends Factory<Cascade>
     processFactories.add( processFactory );
     }
 
-  protected Collection<R> getAllResources()
+  protected Collection<Resource> getAllResources()
     {
     initResourceGraph();
 
-    Set<R> resources = new HashSet<R>();
+    Set<Resource> resources = new HashSet<Resource>();
 
     resources.addAll( resourceGraph.vertexSet() );
 
     return resources;
     }
 
-  protected Collection<R> getResourcesWith( String identifier )
+  protected Collection<Resource> getResourcesWith( String identifier )
     {
     initResourceGraph();
 
-    Set<R> resources = new HashSet<R>();
+    Set<Resource> resources = new HashSet<Resource>();
 
-    for( R resource : resourceGraph.vertexSet() )
+    for( Resource resource : resourceGraph.vertexSet() )
       {
       if( resource.getIdentifier().equals( identifier ) )
         resources.add( resource );
@@ -108,7 +108,7 @@ public class CascadeFactory<R extends TapResource> extends Factory<Cascade>
     return resources;
     }
 
-  protected Collection<ProcessFactory> getSourceDependenciesOn( R sourceResource )
+  protected Collection<ProcessFactory> getSourceDependenciesOn( Resource sourceResource )
     {
     initResourceGraph();
 
@@ -121,7 +121,7 @@ public class CascadeFactory<R extends TapResource> extends Factory<Cascade>
     return factories;
     }
 
-  protected Collection<ProcessFactory> getSinkDependenciesOn( R sourceResource )
+  protected Collection<ProcessFactory> getSinkDependenciesOn( Resource sourceResource )
     {
     initResourceGraph();
 
@@ -142,23 +142,23 @@ public class CascadeFactory<R extends TapResource> extends Factory<Cascade>
 
   protected void rebuildResourceGraph()
     {
-    resourceGraph = new SimpleDirectedGraph<R, ProcessFactoryHolder>( ProcessFactoryHolder.class );
+    resourceGraph = new SimpleDirectedGraph<Resource, ProcessFactoryHolder>( ProcessFactoryHolder.class );
 
     for( ProcessFactory processFactory : processFactories )
       insertProcessFactory( processFactory );
     }
 
-  private void insertProcessFactory( ProcessFactory<?, R> processFactory )
+  private void insertProcessFactory( ProcessFactory<?, Resource> processFactory )
     {
-    for( R resource : processFactory.getAllSourceResources() )
+    for( Resource resource : processFactory.getAllSourceResources() )
       resourceGraph.addVertex( resource );
 
-    for( R resource : processFactory.getAllSinkResources() )
+    for( Resource resource : processFactory.getAllSinkResources() )
       resourceGraph.addVertex( resource );
 
-    for( R incoming : processFactory.getAllSourceResources() )
+    for( Resource incoming : processFactory.getAllSourceResources() )
       {
-      for( R outgoing : processFactory.getAllSinkResources() )
+      for( Resource outgoing : processFactory.getAllSinkResources() )
         resourceGraph.addEdge( incoming, outgoing, new ProcessFactoryHolder( processFactory ) );
       }
     }

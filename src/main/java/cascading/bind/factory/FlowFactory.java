@@ -88,7 +88,7 @@ public abstract class FlowFactory extends ProcessFactory<Flow, TapResource>
     Tap[] taps = new Tap[ resources.size() ];
 
     for( int i = 0; i < resources.size(); i++ )
-      taps[ i ] = schema.getTapFor( (TapResource) resources.get( i ) );
+      taps[ i ] = schema.getTapFor( resources.get( i ) );
 
     if( taps.length == 1 )
       return taps[ 0 ];
@@ -128,7 +128,7 @@ public abstract class FlowFactory extends ProcessFactory<Flow, TapResource>
     Tap[] taps = new Tap[ resources.size() ];
 
     for( int i = 0; i < resources.size(); i++ )
-      taps[ i ] = schema.getTapFor( (TapResource) resources.get( i ) );
+      taps[ i ] = schema.getTapFor( resources.get( i ) );
 
     if( taps.length == 1 )
       return taps[ 0 ];

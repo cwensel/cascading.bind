@@ -30,16 +30,16 @@ import cascading.tap.Tap;
  * <p/>
  * TapResource extends {@link Resource} and binds {@link SinkMode} as the Resource 'mode' type.
  *
- * @param <P> a 'protocol' type
- * @param <F> a data 'format' type
+ * @param <Protocol> a 'protocol' type
+ * @param <Format>   a data 'format' type
  */
-public abstract class TapResource<P, F> extends Resource<P, F, SinkMode>
+public abstract class TapResource<Protocol, Format> extends Resource<Protocol, Format, SinkMode>
   {
   protected TapResource()
     {
     }
 
-  public TapResource( String path, P protocol, F format, SinkMode mode )
+  public TapResource( String path, Protocol protocol, Format format, SinkMode mode )
     {
     super( path, protocol, format, mode );
     }

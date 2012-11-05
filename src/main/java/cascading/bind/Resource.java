@@ -24,23 +24,23 @@ package cascading.bind;
  * Class Resource represents an referenceable and identifiable data resource that has a 'protocol', 'format', and optionally a access 'mode'
  * associated with it.
  *
- * @param <P> a 'protocol' type
- * @param <F> a data 'format' type
- * @param <M> a access 'mode' type
+ * @param <Protocol> a 'protocol' type
+ * @param <Format>   a data 'format' type
+ * @param <Mode>     a access 'mode' type
  * @see TapResource
  */
-public class Resource<P, F, M>
+public class Resource<Protocol, Format, Mode>
   {
   private String identifier;
-  private P protocol;
-  private F format;
-  private M mode;
+  private Protocol protocol;
+  private Format format;
+  private Mode mode;
 
   protected Resource()
     {
     }
 
-  public Resource( String identifier, P protocol, F format, M mode )
+  public Resource( String identifier, Protocol protocol, Format format, Mode mode )
     {
     this.identifier = identifier;
     this.protocol = protocol;
@@ -48,13 +48,13 @@ public class Resource<P, F, M>
     this.mode = mode;
     }
 
-  public Resource( String identifier, F format )
+  public Resource( String identifier, Format format )
     {
     this.identifier = identifier;
     this.format = format;
     }
 
-  public Resource( String identifier, F format, M mode )
+  public Resource( String identifier, Format format, Mode mode )
     {
     this.identifier = identifier;
     this.format = format;
@@ -66,17 +66,17 @@ public class Resource<P, F, M>
     return identifier;
     }
 
-  public P getProtocol()
+  public Protocol getProtocol()
     {
     return protocol;
     }
 
-  public F getFormat()
+  public Format getFormat()
     {
     return format;
     }
 
-  public M getMode()
+  public Mode getMode()
     {
     return mode;
     }

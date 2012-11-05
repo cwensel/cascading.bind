@@ -25,7 +25,7 @@ import java.util.Properties;
 /**
  *
  */
-public abstract class Factory<P>
+public abstract class Factory<Process>
   {
   private Properties properties;
 
@@ -53,5 +53,5 @@ public abstract class Factory<P>
    *
    * @return
    */
-  public abstract P create();
+  public abstract Process create();
   }

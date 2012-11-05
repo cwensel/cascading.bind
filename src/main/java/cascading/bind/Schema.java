@@ -46,24 +46,23 @@ import cascading.tuple.Fields;
  * It is a common practice to sub-class Schema so that each new class represents a particular abstract
  * data type like 'person' or an Apache server log record.
  *
- * @param <P> a 'protocol' type
- * @param <F> a data 'format' type
+ * @param <Protocol> a 'protocol' type
+ * @param <Format>   a data 'format' type
  */
-public class Schema<P, F>
+public class Schema<Protocol, Format>
   {
   String name = getClass().getSimpleName().replaceAll( "Schema$", "" );
-  P defaultProtocol;
-  Fields sourceFields;
-  Fields sinkFields;
+  Protocol defaultProtocol;
+  Fields fields;
 
   final Map<Pair, Scheme> schemes = new HashMap<Pair, Scheme>();
 
-  private static class Pair<P, F>
+  private static class Pair<Protocol, Format>
     {
-    final P protocol;
-    final F format;
+    final Protocol protocol;
+    final Format format;
 
-    private Pair( P protocol, F format )
+    private Pair( Protocol protocol, Format format )
       {
       this.protocol = protocol;
       this.format = format;
@@ -106,7 +105,7 @@ public class Schema<P, F>
       }
     }
 
-  protected Schema( P defaultProtocol )
+  protected Schema( Protocol defaultProtocol )
     {
     if( defaultProtocol == null )
       throw new IllegalArgumentException( "defaultProtocol may not be null" );
@@ -124,41 +123,36 @@ public class Schema<P, F>
     this.name = name;
     }
 
-  public P getDefaultProtocol()
+  public Protocol getDefaultProtocol()
     {
     return defaultProtocol;
     }
 
-  public Fields getSourceFields()
+  public Fields getFields()
     {
-    return sourceFields;
-    }
-
-  public Fields getSinkFields()
-    {
-    return sinkFields;
+    return fields;
     }
 
   private void setFields( Scheme scheme )
     {
     if( scheme.isSource() )
       {
-      if( sourceFields == null )
-        sourceFields = scheme.getSourceFields();
-      else if( !sourceFields.equals( scheme.getSourceFields() ) )
-        throw new IllegalArgumentException( "all schemes added to schema must have the same source fields, expected: " + sourceFields + ", received: " + scheme.getSourceFields() + " in schema: " + getName() );
+      if( fields == null )
+        fields = scheme.getSourceFields();
+      else if( !fields.equals( scheme.getSourceFields() ) )
+        throw new IllegalArgumentException( "all schemes added to schema must have the same source fields, expected: " + fields + ", received: " + scheme.getSourceFields() + " in schema: " + getName() );
       }
 
     if( scheme.isSink() )
       {
-      if( sinkFields == null )
-        sinkFields = scheme.getSinkFields();
-      else if( !sinkFields.equals( scheme.getSinkFields() ) )
-        throw new IllegalArgumentException( "all schemes added to schema must have the same sink fields, expected: " + sinkFields + ", received: " + scheme.getSinkFields() + " in schema: " + getName() );
+      if( fields == null )
+        fields = scheme.getSinkFields();
+      else if( !fields.equals( scheme.getSinkFields() ) )
+        throw new IllegalArgumentException( "all schemes added to schema must have the same sink fields, expected: " + fields + ", received: " + scheme.getSinkFields() + " in schema: " + getName() );
       }
     }
 
-  protected void addSchemeFor( P protocol, F format, Scheme scheme )
+  protected void addSchemeFor( Protocol protocol, Format format, Scheme scheme )
     {
     if( protocol == null )
       {
@@ -168,30 +162,30 @@ public class Schema<P, F>
 
     setFields( scheme );
 
-    schemes.put( new Pair<P, F>( protocol, format ), scheme );
+    schemes.put( new Pair<Protocol, Format>( protocol, format ), scheme );
     }
 
-  protected void addSchemeFor( F format, Scheme scheme )
+  protected void addSchemeFor( Format format, Scheme scheme )
     {
     setFields( scheme );
 
-    schemes.put( new Pair<P, F>( defaultProtocol, format ), scheme );
+    schemes.put( new Pair<Protocol, Format>( defaultProtocol, format ), scheme );
     }
 
-  public Scheme getSchemeFor( P protocol, F format )
+  public Scheme getSchemeFor( Protocol protocol, Format format )
     {
     if( protocol == null )
       return getSchemeFor( format );
 
-    return schemes.get( new Pair<P, F>( protocol, format ) );
+    return schemes.get( new Pair<Protocol, Format>( protocol, format ) );
     }
 
-  public Scheme getSchemeFor( F format )
+  public Scheme getSchemeFor( Format format )
     {
-    return schemes.get( new Pair<P, F>( defaultProtocol, format ) );
+    return schemes.get( new Pair<Protocol, Format>( defaultProtocol, format ) );
     }
 
-  public Collection<Scheme> getAllSchemesFor( F format )
+  public Collection<Scheme> getAllSchemesFor( Format format )
     {
     List<Scheme> found = new ArrayList<Scheme>();
 
@@ -204,12 +198,12 @@ public class Schema<P, F>
     return found;
     }
 
-  public boolean containsSchemeFor( F format )
+  public boolean containsSchemeFor( Format format )
     {
     return !getAllSchemesFor( format ).isEmpty();
     }
 
-  public Tap getTapFor( TapResource<P, F> resource )
+  public Tap getTapFor( TapResource<Protocol, Format> resource )
     {
     Scheme scheme = getSchemeFor( resource.getProtocol(), resource.getFormat() );
 
@@ -219,7 +213,7 @@ public class Schema<P, F>
     return resource.createTapFor( scheme );
     }
 
-  public Tap getSourceTapFor( TapResource<P, F>... resources )
+  public Tap getSourceTapFor( TapResource<Protocol, Format>... resources )
     {
     Tap[] taps = new Tap[ resources.length ];
 
@@ -232,7 +226,7 @@ public class Schema<P, F>
     return new MultiSourceTap( taps );
     }
 
-  public Tap getSinkTapFor( TapResource<P, F>... resources )
+  public Tap getSinkTapFor( TapResource<Protocol, Format>... resources )
     {
     Tap[] taps = new Tap[ resources.length ];
 
@@ -245,14 +239,14 @@ public class Schema<P, F>
     return new MultiSinkTap( taps );
     }
 
-  Pair<P, F> pair( Resource<P, F, ?> resource )
+  Pair<Protocol, Format> pair( Resource<Protocol, Format, ?> resource )
     {
-    P protocol = resource.getProtocol();
+    Protocol protocol = resource.getProtocol();
 
     if( protocol == null )
       protocol = defaultProtocol;
 
-    return new Pair<P, F>( protocol, resource.getFormat() );
+    return new Pair<Protocol, Format>( protocol, resource.getFormat() );
     }
 
   @Override
@@ -265,7 +259,7 @@ public class Schema<P, F>
 
     Schema schema = (Schema) object;
 
-    if( sourceFields != null ? !sourceFields.equals( schema.sourceFields ) : schema.sourceFields != null )
+    if( fields != null ? !fields.equals( schema.fields ) : schema.fields != null )
       return false;
 
     return true;
@@ -274,6 +268,6 @@ public class Schema<P, F>
   @Override
   public int hashCode()
     {
-    return sourceFields != null ? sourceFields.hashCode() : 0;
+    return fields != null ? fields.hashCode() : 0;
     }
   }
