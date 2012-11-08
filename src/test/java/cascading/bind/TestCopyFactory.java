@@ -23,9 +23,10 @@ package cascading.bind;
 import java.util.Properties;
 
 import cascading.bind.factory.FlowFactory;
+import cascading.bind.tap.TapResource;
 import cascading.flow.Flow;
 import cascading.flow.FlowConnector;
-import cascading.flow.hadoop.HadoopFlowConnector;
+import cascading.flow.local.LocalFlowConnector;
 import cascading.pipe.Pipe;
 
 /**
@@ -34,8 +35,6 @@ import cascading.pipe.Pipe;
  */
 public class TestCopyFactory extends FlowFactory
   {
-  private String name;
-
   public TestCopyFactory( String name )
     {
     this( null, name );
@@ -43,8 +42,7 @@ public class TestCopyFactory extends FlowFactory
 
   public TestCopyFactory( Properties properties, String name )
     {
-    super( properties );
-    this.name = name;
+    super( properties, name );
 
     setSourceSchema( name, new CopySchema() );
     setSinkSchema( name, new CopySchema() );
@@ -52,25 +50,25 @@ public class TestCopyFactory extends FlowFactory
 
   public void addSourceResource( TapResource resource )
     {
-    addSourceResource( name, resource );
+    addSourceResource( getName(), resource );
     }
 
   public void addSinkResource( TapResource resource )
     {
-    addSinkResource( name, resource );
+    addSinkResource( getName(), resource );
     }
 
   @Override
   protected FlowConnector getFlowConnector()
     {
-    return new HadoopFlowConnector( getProperties() );
+    return new LocalFlowConnector( getProperties() );
     }
 
   @Override
   public Flow create()
     {
-    Pipe pipe = new Pipe( name ); // this forces pipe-lining between the source and sink
+    Pipe pipe = new Pipe( getName() ); // this forces pipe-lining between the source and sink
 
-    return createFlowFrom( name, pipe );
+    return createFlowFrom( getName(), pipe );
     }
   }

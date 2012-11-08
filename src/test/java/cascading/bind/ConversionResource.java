@@ -23,10 +23,11 @@ package cascading.bind;
 import cascading.bind.tap.HTTPTap;
 import cascading.bind.tap.JDBCScheme;
 import cascading.bind.tap.JDBCTap;
+import cascading.bind.tap.TapResource;
 import cascading.scheme.Scheme;
 import cascading.tap.SinkMode;
 import cascading.tap.Tap;
-import cascading.tap.hadoop.Hfs;
+import cascading.tap.local.FileTap;
 
 /** A mock resource that acts as a factory for specific Tap types. */
 public class ConversionResource extends TapResource<Protocol, Format>
@@ -47,12 +48,12 @@ public class ConversionResource extends TapResource<Protocol, Format>
     Protocol protocol = getProtocol();
 
     if( protocol == null )
-      protocol = Protocol.HDFS;
+      protocol = Protocol.FILE;
 
     switch( protocol )
       {
-      case HDFS:
-        return new Hfs( scheme, getIdentifier(), getMode() );
+      case FILE:
+        return new FileTap( scheme, getIdentifier(), getMode() );
       case JDBC:
         return new JDBCTap( (JDBCScheme) scheme, getIdentifier(), getMode() );
       case HTTP:

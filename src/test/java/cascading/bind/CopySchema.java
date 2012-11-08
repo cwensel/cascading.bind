@@ -20,7 +20,8 @@
 
 package cascading.bind;
 
-import cascading.scheme.hadoop.TextLine;
+import cascading.bind.catalog.Schema;
+import cascading.scheme.local.TextLine;
 import cascading.tuple.Fields;
 
 /**
@@ -32,7 +33,7 @@ public class CopySchema extends Schema<Protocol, Format>
   {
   protected CopySchema()
     {
-    super( Protocol.HDFS );
+    super( Protocol.FILE );
 
     addSchemeFor( Format.TSV, new TextLine( new Fields( "line" ), new Fields( "line" ) ) );
     addSchemeFor( Format.CSV, new TextLine( new Fields( "line" ), new Fields( "line" ) ) );

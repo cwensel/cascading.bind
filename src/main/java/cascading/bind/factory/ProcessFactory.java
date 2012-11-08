@@ -30,15 +30,15 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
-import cascading.bind.Schema;
-import cascading.bind.TapResource;
+import cascading.bind.catalog.Schema;
+import cascading.bind.tap.TapResource;
 
 /**
  * Class ProcessFactory is an abstract base class for creating process based factories. Where a 'process'
- * has source and sink resources as defined by {@link Schema} instances.
+ * has source and sink resources as defined by {@link cascading.bind.tap.TapFactory} instances.
  *
  * @param <Process>  a 'process' type
- * @param <Resource> a resource type sub-classing {@link cascading.bind.Resource}
+ * @param <Resource> a resource type sub-classing {@link cascading.bind.catalog.Resource}
  * @see FlowFactory
  */
 public abstract class ProcessFactory<Process, Resource extends TapResource> extends Factory<Process>
@@ -58,7 +58,7 @@ public abstract class ProcessFactory<Process, Resource extends TapResource> exte
     }
 
   /**
-   * Method addSourceSchema binds a given {@link Schema} instance to the given 'name'.
+   * Method addSourceSchema binds a given {@link cascading.bind.tap.TapFactory} instance to the given 'name'.
    * <p/>
    * Only one Schema may be bound to a source name.
    *
@@ -82,7 +82,7 @@ public abstract class ProcessFactory<Process, Resource extends TapResource> exte
     }
 
   /**
-   * Method addSinkSchema binds a given {@link Schema} instance to the given 'name'.
+   * Method addSinkSchema binds a given {@link cascading.bind.tap.TapFactory} instance to the given 'name'.
    * <p/>
    * Only one Schema may be bound to a sink name.
    *
@@ -150,7 +150,7 @@ public abstract class ProcessFactory<Process, Resource extends TapResource> exte
 
   /**
    * Method getAllSourceResources returns a Collection of all Resources instances add via
-   * {@link #addSourceResource(String, cascading.bind.TapResource[])}.
+   * {@link #addSourceResource(String, cascading.bind.tap.TapResource[])}.
    *
    * @return Collection of Resource instances
    */
@@ -225,7 +225,7 @@ public abstract class ProcessFactory<Process, Resource extends TapResource> exte
 
   /**
    * Method getAllSinkResources returns a Collection of all Resources instances add via
-   * {@link #addSinkResource(String, cascading.bind.TapResource[])}.
+   * {@link #addSinkResource(String, cascading.bind.tap.TapResource[])}.
    *
    * @return Collection of Resource instances
    */

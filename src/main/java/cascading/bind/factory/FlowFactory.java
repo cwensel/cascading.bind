@@ -27,11 +27,13 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
-import cascading.bind.Schema;
-import cascading.bind.TapResource;
+import cascading.bind.catalog.Schema;
+import cascading.bind.tap.TapFactory;
+import cascading.bind.tap.TapResource;
 import cascading.cascade.Cascades;
 import cascading.flow.Flow;
 import cascading.flow.FlowConnector;
+import cascading.flow.FlowDef;
 import cascading.pipe.Pipe;
 import cascading.tap.MultiSinkTap;
 import cascading.tap.MultiSourceTap;
@@ -47,19 +49,27 @@ import cascading.tap.Tap;
  */
 public abstract class FlowFactory extends ProcessFactory<Flow, TapResource>
   {
+  protected String name;
+
   protected FlowFactory()
     {
     }
 
-  protected FlowFactory( Properties properties )
+  protected FlowFactory( Properties properties, String name )
     {
     super( properties );
+    this.name = name;
+    }
+
+  public String getName()
+    {
+    return name;
     }
 
   /**
    * Method getSourceTapFor returns a new {@link Tap} instance for the given name.
    * <p/>
-   * First the bound {@link Schema} is looked up, then a Tap is created by the bound
+   * First the bound {@link cascading.bind.tap.TapFactory} is looked up, then a Tap is created by the bound
    * {@link TapResource} instance.
    * <p/>
    * If more than one Resource is bound to the given name, a {@link MultiSourceTap}
@@ -70,15 +80,15 @@ public abstract class FlowFactory extends ProcessFactory<Flow, TapResource>
    */
   public Tap getSourceTapFor( String sourceName )
     {
-    Schema schema = sourceSchemas.get( sourceName );
+    TapFactory factory = getTapFactory( sourceSchemas.get( sourceName ) );
 
-    if( schema == null )
+    if( factory == null )
       throw new IllegalArgumentException( "could not find schema for source name: " + sourceName );
 
-    return getSourceTapFor( sourceName, schema );
+    return getSourceTapFor( sourceName, factory );
     }
 
-  protected Tap getSourceTapFor( String sourceName, Schema schema )
+  protected Tap getSourceTapFor( String sourceName, TapFactory factory )
     {
     List<TapResource> resources = getSourceResources( sourceName );
 
@@ -88,7 +98,7 @@ public abstract class FlowFactory extends ProcessFactory<Flow, TapResource>
     Tap[] taps = new Tap[ resources.size() ];
 
     for( int i = 0; i < resources.size(); i++ )
-      taps[ i ] = schema.getTapFor( resources.get( i ) );
+      taps[ i ] = factory.getTapFor( resources.get( i ) );
 
     if( taps.length == 1 )
       return taps[ 0 ];
@@ -99,7 +109,7 @@ public abstract class FlowFactory extends ProcessFactory<Flow, TapResource>
   /**
    * Method getSinkTapFor returns a new {@link Tap} instance for the given name.
    * <p/>
-   * First the bound {@link Schema} is looked up, then a Tap is created by the bound
+   * First the bound {@link cascading.bind.tap.TapFactory} is looked up, then a Tap is created by the bound
    * {@link TapResource} instance.
    * <p/>
    * If more than one Resource is bound to the given name, a {@link MultiSinkTap}
@@ -110,15 +120,15 @@ public abstract class FlowFactory extends ProcessFactory<Flow, TapResource>
    */
   public Tap getSinkTapFor( String sinkName )
     {
-    Schema schema = sinkSchemas.get( sinkName );
+    TapFactory factory = getTapFactory( sinkSchemas.get( sinkName ) );
 
-    if( schema == null )
+    if( factory == null )
       throw new IllegalArgumentException( "could not find schema for sink name: " + sinkName );
 
-    return getSinkTapFor( sinkName, schema );
+    return getSinkTapFor( sinkName, factory );
     }
 
-  protected Tap getSinkTapFor( String sinkName, Schema schema )
+  protected Tap getSinkTapFor( String sinkName, TapFactory factory )
     {
     List<TapResource> resources = getSinkResources( sinkName );
 
@@ -128,12 +138,17 @@ public abstract class FlowFactory extends ProcessFactory<Flow, TapResource>
     Tap[] taps = new Tap[ resources.size() ];
 
     for( int i = 0; i < resources.size(); i++ )
-      taps[ i ] = schema.getTapFor( resources.get( i ) );
+      taps[ i ] = factory.getTapFor( resources.get( i ) );
 
     if( taps.length == 1 )
       return taps[ 0 ];
 
     return new MultiSinkTap( taps );
+    }
+
+  private TapFactory getTapFactory( Schema schema )
+    {
+    return new TapFactory( schema );
     }
 
   protected Tap[] getSourceTapsFor( String... sourceNames )
@@ -217,9 +232,21 @@ public abstract class FlowFactory extends ProcessFactory<Flow, TapResource>
    */
   protected Flow createFlowFrom( String name, Pipe... tails )
     {
+    FlowDef flowDef = FlowDef.flowDef()
+      .setName( name )
+      .addTails( tails );
+
+    return createFlowFrom( flowDef, tails );
+    }
+
+  protected Flow createFlowFrom( FlowDef flowDef, Pipe... tails )
+    {
     Map<String, Tap> sources = getSourceTapsMap( tails );
     Map<String, Tap> sinks = getSinkTapsMap( tails );
 
-    return getFlowConnector().connect( name, sources, sinks, tails );
+    flowDef.addSources( sources );
+    flowDef.addSinks( sinks );
+
+    return getFlowConnector().connect( flowDef );
     }
   }

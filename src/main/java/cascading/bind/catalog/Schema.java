@@ -18,7 +18,7 @@
  * limitations under the License.
  */
 
-package cascading.bind;
+package cascading.bind.catalog;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -27,11 +27,7 @@ import java.util.List;
 import java.util.Map;
 
 import cascading.scheme.Scheme;
-import cascading.tap.MultiSinkTap;
-import cascading.tap.MultiSourceTap;
-import cascading.tap.Tap;
 import cascading.tuple.Fields;
-
 
 /**
  * Class Schema is used to map between 'protocols' and 'formats' to available Cascading Scheme instances.
@@ -54,63 +50,21 @@ public class Schema<Protocol, Format>
   String name = getClass().getSimpleName().replaceAll( "Schema$", "" );
   Protocol defaultProtocol;
   Fields fields;
+  final Map<Point, Scheme> schemes = new HashMap<Point, Scheme>();
 
-  final Map<Pair, Scheme> schemes = new HashMap<Pair, Scheme>();
-
-  private static class Pair<Protocol, Format>
+  public Schema( Protocol defaultProtocol )
     {
-    final Protocol protocol;
-    final Format format;
-
-    private Pair( Protocol protocol, Format format )
-      {
-      this.protocol = protocol;
-      this.format = format;
-      }
-
-    @Override
-    public boolean equals( Object object )
-      {
-      if( this == object )
-        return true;
-      if( object == null || getClass() != object.getClass() )
-        return false;
-
-      Pair pair = (Pair) object;
-
-      if( format != null ? !format.equals( pair.format ) : pair.format != null )
-        return false;
-      if( protocol != null ? !protocol.equals( pair.protocol ) : pair.protocol != null )
-        return false;
-
-      return true;
-      }
-
-    @Override
-    public int hashCode()
-      {
-      int result = protocol != null ? protocol.hashCode() : 0;
-      result = 31 * result + ( format != null ? format.hashCode() : 0 );
-      return result;
-      }
-
-    @Override
-    public String toString()
-      {
-      final StringBuilder sb = new StringBuilder();
-      sb.append( "[protocol=" ).append( protocol );
-      sb.append( ", format=" ).append( format );
-      sb.append( "]" );
-      return sb.toString();
-      }
+    this( defaultProtocol, null, null );
     }
 
-  protected Schema( Protocol defaultProtocol )
+  public Schema( Protocol defaultProtocol, String name, Fields fields )
     {
+    this.defaultProtocol = defaultProtocol;
+    this.name = name == null ? this.name : name;
+    this.fields = fields;
+
     if( defaultProtocol == null )
       throw new IllegalArgumentException( "defaultProtocol may not be null" );
-
-    this.defaultProtocol = defaultProtocol;
     }
 
   public String getName()
@@ -162,14 +116,14 @@ public class Schema<Protocol, Format>
 
     setFields( scheme );
 
-    schemes.put( new Pair<Protocol, Format>( protocol, format ), scheme );
+    schemes.put( new Point<Protocol, Format>( protocol, format ), scheme );
     }
 
   protected void addSchemeFor( Format format, Scheme scheme )
     {
     setFields( scheme );
 
-    schemes.put( new Pair<Protocol, Format>( defaultProtocol, format ), scheme );
+    schemes.put( new Point<Protocol, Format>( defaultProtocol, format ), scheme );
     }
 
   public Scheme getSchemeFor( Protocol protocol, Format format )
@@ -177,19 +131,19 @@ public class Schema<Protocol, Format>
     if( protocol == null )
       return getSchemeFor( format );
 
-    return schemes.get( new Pair<Protocol, Format>( protocol, format ) );
+    return schemes.get( new Point<Protocol, Format>( protocol, format ) );
     }
 
   public Scheme getSchemeFor( Format format )
     {
-    return schemes.get( new Pair<Protocol, Format>( defaultProtocol, format ) );
+    return schemes.get( new Point<Protocol, Format>( defaultProtocol, format ) );
     }
 
   public Collection<Scheme> getAllSchemesFor( Format format )
     {
     List<Scheme> found = new ArrayList<Scheme>();
 
-    for( Map.Entry<Pair, Scheme> entry : schemes.entrySet() )
+    for( Map.Entry<Point, Scheme> entry : schemes.entrySet() )
       {
       if( format.equals( entry.getKey().format ) )
         found.add( entry.getValue() );
@@ -203,50 +157,22 @@ public class Schema<Protocol, Format>
     return !getAllSchemesFor( format ).isEmpty();
     }
 
-  public Tap getTapFor( TapResource<Protocol, Format> resource )
-    {
-    Scheme scheme = getSchemeFor( resource.getProtocol(), resource.getFormat() );
-
-    if( scheme == null )
-      throw new IllegalArgumentException( "no scheme found for: " + pair( resource ) + " in schema: " + getName() );
-
-    return resource.createTapFor( scheme );
-    }
-
-  public Tap getSourceTapFor( TapResource<Protocol, Format>... resources )
-    {
-    Tap[] taps = new Tap[ resources.length ];
-
-    for( int i = 0; i < resources.length; i++ )
-      taps[ i ] = getTapFor( resources[ i ] );
-
-    if( taps.length == 1 )
-      return taps[ 0 ];
-
-    return new MultiSourceTap( taps );
-    }
-
-  public Tap getSinkTapFor( TapResource<Protocol, Format>... resources )
-    {
-    Tap[] taps = new Tap[ resources.length ];
-
-    for( int i = 0; i < resources.length; i++ )
-      taps[ i ] = getTapFor( resources[ i ] );
-
-    if( taps.length == 1 )
-      return taps[ 0 ];
-
-    return new MultiSinkTap( taps );
-    }
-
-  Pair<Protocol, Format> pair( Resource<Protocol, Format, ?> resource )
+  protected Point<Protocol, Format> pair( Resource<Protocol, Format, ?> resource )
     {
     Protocol protocol = resource.getProtocol();
 
     if( protocol == null )
       protocol = defaultProtocol;
 
-    return new Pair<Protocol, Format>( protocol, resource.getFormat() );
+    return new Point<Protocol, Format>( protocol, resource.getFormat() );
+    }
+
+  protected Point<Protocol, Format> pair( Protocol protocol, Format format )
+    {
+    if( protocol == null )
+      protocol = defaultProtocol;
+
+    return new Point<Protocol, Format>( protocol, format );
     }
 
   @Override

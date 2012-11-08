@@ -18,7 +18,7 @@
  * limitations under the License.
  */
 
-package cascading.bind;
+package cascading.bind.catalog;
 
 /**
  * Class Resource represents an referenceable and identifiable data resource that has a 'protocol', 'format', and optionally a access 'mode'
@@ -27,7 +27,7 @@ package cascading.bind;
  * @param <Protocol> a 'protocol' type
  * @param <Format>   a data 'format' type
  * @param <Mode>     a access 'mode' type
- * @see TapResource
+ * @see cascading.bind.tap.TapResource
  */
 public class Resource<Protocol, Format, Mode>
   {

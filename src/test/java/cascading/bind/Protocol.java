@@ -24,5 +24,5 @@ package cascading.bind;
  */
 public enum Protocol
   {
-    HDFS, JDBC, HTTP
+    FILE, JDBC, HTTP
   }

@@ -21,31 +21,31 @@
 package cascading.bind;
 
 import cascading.CascadingTestCase;
+import cascading.bind.tap.TapFactory;
 import cascading.cascade.Cascade;
 import cascading.flow.Flow;
 import cascading.tap.Tap;
-import cascading.test.PlatformTest;
 import junit.framework.Assert;
 
 /**
  *
  */
-@PlatformTest(platforms = {"none"})
 public class SimpleTest extends CascadingTestCase
   {
   public void testSchema()
     {
     PersonSchema schema = new PersonSchema();
+    TapFactory tapFactory = new TapFactory( schema );
 
-    Assert.assertNotNull( schema.getTapFor( new ConversionResource( "foo", Protocol.HDFS, Format.TSV ) ) );
-    Assert.assertNotNull( schema.getTapFor( new ConversionResource( "foo", Protocol.HTTP, Format.JSON ) ) );
+    Assert.assertNotNull( tapFactory.getTapFor( new ConversionResource( "foo", Protocol.FILE, Format.TSV ) ) );
+    Assert.assertNotNull( tapFactory.getTapFor( new ConversionResource( "foo", Protocol.HTTP, Format.JSON ) ) );
     }
 
   public void testFlowFactory()
     {
     CSVToTSVFactory factory = new CSVToTSVFactory( "convert", new PersonSchema() );
 
-    factory.setSource( Protocol.HDFS, "some/path" );
+    factory.setSource( Protocol.FILE, "some/path" );
     factory.setSink( Protocol.HTTP, "http://some/place" );
 
     Flow flow = factory.create();
@@ -61,16 +61,16 @@ public class SimpleTest extends CascadingTestCase
     {
     // these factories read from the same location, but pretend they do something different
     CSVToTSVFactory factory1 = new CSVToTSVFactory( "convert1", new PersonSchema() );
-    factory1.setSource( Protocol.HDFS, "some/remote/path" );
-    factory1.setSink( Protocol.HDFS, "some/place/first" );
+    factory1.setSource( Protocol.FILE, "some/remote/path" );
+    factory1.setSink( Protocol.FILE, "some/place/first" );
 
     CSVToTSVFactory factory2 = new CSVToTSVFactory( "convert2", new PersonSchema() );
-    factory2.setSource( Protocol.HDFS, "some/remote/path" );
-    factory2.setSink( Protocol.HDFS, "some/place/second" );
+    factory2.setSource( Protocol.FILE, "some/remote/path" );
+    factory2.setSink( Protocol.FILE, "some/place/second" );
 
     CSVToTSVFactory factory3 = new CSVToTSVFactory( "convert3", new PersonSchema() );
-    factory3.setSource( Protocol.HDFS, "some/remote/path" );
-    factory3.setSink( Protocol.HDFS, "some/place/third" );
+    factory3.setSource( Protocol.FILE, "some/remote/path" );
+    factory3.setSink( Protocol.FILE, "some/place/third" );
 
     // will insert a copy flow if more than one other flow-factory is reading
     // from the same remote source, then update the dependent factories

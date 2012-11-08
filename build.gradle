@@ -22,6 +22,10 @@
 
 apply plugin: 'java'
 apply plugin: 'idea'
+apply plugin: 'maven'
+
+group = 'cascading'
+version = '1.0-wip-dev'
 
 repositories {
   mavenLocal()
@@ -29,8 +33,82 @@ repositories {
   mavenRepo name: 'conjars', url: 'http://conjars.org/repo/'
 }
 
-dependencies {
-  compile 'cascading:cascading-core:2.2.+'
-  compile 'cascading:cascading-hadoop:2.2.+'
-  testCompile 'cascading:cascading-platform:2.2.+'
+configurations {
+  testArtifacts {
+    extendsFrom testRuntime
+  }
 }
+
+task sourcesJar( type: Jar, dependsOn: classes ) {
+  from sourceSets.main.allSource
+  classifier = 'sources'
+}
+
+task javadocJar( type: Jar, dependsOn: javadoc ) {
+  classifier = 'javadoc'
+  from javadoc.destinationDir
+}
+
+task testsJar( type: Jar, dependsOn: testClasses ) {
+  from sourceSets.test.output
+  classifier = 'tests'
+}
+
+artifacts {
+  archives jar
+  archives sourcesJar
+  archives javadocJar
+  archives testsJar
+  testArtifacts testsJar
+}
+
+dependencies {
+
+  def cascadingVersion = '2.2.+'
+
+  compile group: 'cascading', name: 'cascading-core', version: cascadingVersion, changing: true
+  compile group: 'cascading', name: 'cascading-local', version: cascadingVersion, changing: true
+//  compile group: 'cascading', name: 'cascading-hadoop', version: cascadingVersion, changing: true
+
+  testCompile group: 'cascading', name: 'cascading-core', version: cascadingVersion, classifier: 'tests', changing: true
+  testCompile group: 'cascading', name: 'cascading-local', version: cascadingVersion, classifier: 'tests', changing: true
+//  testCompile group: 'cascading', name: 'cascading-hadoop', version: cascadingVersion, classifier: 'tests', changing: true
+  testCompile group: 'cascading', name: 'cascading-platform', version: cascadingVersion, classifier: 'tests', changing: true
+
+  testCompile group: 'junit', name: 'junit', version: '4.8.+'
+}
+
+uploadArchives {
+
+  def repoUrl = 'http://conjars.org/repo/'
+  def repoUserName = System.properties[ 'publish.repo.userName' ]
+  def repoPassword = System.properties[ 'publish.repo.password' ]
+
+  if( System.properties[ 'publish.repo.url' ] )
+    repoUrl = System.properties[ 'publish.repo.url' ]
+
+  repositories.mavenDeployer {
+    configuration = configurations.archives
+
+    repository( url: repoUrl ) {
+      authentication( userName: repoUserName, password: repoPassword )
+    }
+
+    pom.project {
+      description 'An API for data management, analytics, and machine learning on parallel computing clusters.'
+      inceptionYear '2011'
+      url 'http://cascading.org/'
+      scm {
+        url 'https://github.com/Cascading/cascading.bind.git'
+      }
+      licenses {
+        license {
+          name 'The Apache Software License, Version 2.0'
+          url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+          distribution 'repo'
+        }
+      }
+    }
+  }
+}
+

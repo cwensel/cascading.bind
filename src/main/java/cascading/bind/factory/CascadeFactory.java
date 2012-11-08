@@ -27,7 +27,7 @@ import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 
-import cascading.bind.TapResource;
+import cascading.bind.tap.TapResource;
 import cascading.cascade.Cascade;
 import cascading.cascade.CascadeConnector;
 import cascading.flow.Flow;

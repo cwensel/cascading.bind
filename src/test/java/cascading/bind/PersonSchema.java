@@ -20,10 +20,10 @@
 
 package cascading.bind;
 
+import cascading.bind.catalog.Schema;
 import cascading.bind.tap.JDBCScheme;
 import cascading.bind.tap.JSONScheme;
-import cascading.scheme.hadoop.SequenceFile;
-import cascading.scheme.hadoop.TextDelimited;
+import cascading.scheme.local.TextDelimited;
 import cascading.tuple.Fields;
 
 /**
@@ -41,12 +41,12 @@ public class PersonSchema extends Schema<Protocol, Format>
 
   public PersonSchema()
     {
-    super( Protocol.HDFS );
+    super( Protocol.FILE );
 
     addSchemeFor( Format.TSV, new TextDelimited( FIELDS, "\t" ) );
     addSchemeFor( Format.CSV_HEADERS, new TextDelimited( FIELDS, true, ",", "\"" ) );
     addSchemeFor( Format.CSV, new TextDelimited( FIELDS, ",", "\"" ) );
-    addSchemeFor( Format.Native, new SequenceFile( FIELDS ) );
+    addSchemeFor( Format.Native, new TextDelimited( FIELDS, ",", "\"" ) );
 
     addSchemeFor( Protocol.JDBC, Format.Native, new JDBCScheme( FIELDS ) );
     addSchemeFor( Protocol.HTTP, Format.JSON, new JSONScheme( FIELDS ) );

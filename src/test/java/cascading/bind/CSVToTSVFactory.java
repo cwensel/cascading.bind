@@ -22,10 +22,11 @@ package cascading.bind;
 
 import java.util.Properties;
 
+import cascading.bind.catalog.Schema;
 import cascading.bind.factory.FlowFactory;
 import cascading.flow.Flow;
 import cascading.flow.FlowConnector;
-import cascading.flow.hadoop.HadoopFlowConnector;
+import cascading.flow.local.LocalFlowConnector;
 import cascading.pipe.Pipe;
 
 /**
@@ -34,7 +35,6 @@ import cascading.pipe.Pipe;
  */
 public class CSVToTSVFactory extends FlowFactory
   {
-  private String name;
   private boolean hasHeaders;
 
   public CSVToTSVFactory( String name, Schema schema )
@@ -49,8 +49,7 @@ public class CSVToTSVFactory extends FlowFactory
 
   public CSVToTSVFactory( Properties properties, String name, Schema schema, boolean hasHeaders )
     {
-    super( properties );
-    this.name = name;
+    super( properties, name );
     this.hasHeaders = hasHeaders;
 
     setSourceSchema( name, schema );
@@ -59,35 +58,35 @@ public class CSVToTSVFactory extends FlowFactory
 
   public void setSource( String path )
     {
-    setSource( (Protocol) getSourceSchema( name ).getDefaultProtocol(), path );
+    setSource( (Protocol) getSourceSchema( getName() ).getDefaultProtocol(), path );
     }
 
   public void setSource( Protocol protocol, String path )
     {
-    addSourceResource( name, new ConversionResource( path, protocol, hasHeaders ? Format.CSV_HEADERS : Format.CSV ) );
+    addSourceResource( getName(), new ConversionResource( path, protocol, hasHeaders ? Format.CSV_HEADERS : Format.CSV ) );
     }
 
   public void setSink( String path )
     {
-    setSink( (Protocol) getSinkSchema( name ).getDefaultProtocol(), path );
+    setSink( (Protocol) getSinkSchema( getName() ).getDefaultProtocol(), path );
     }
 
   public void setSink( Protocol protocol, String path )
     {
-    addSinkResource( name, new ConversionResource( path, protocol, Format.TSV ) );
+    addSinkResource( getName(), new ConversionResource( path, protocol, Format.TSV ) );
     }
 
   @Override
   protected FlowConnector getFlowConnector()
     {
-    return new HadoopFlowConnector( getProperties() );
+    return new LocalFlowConnector( getProperties() );
     }
 
   @Override
   public Flow create()
     {
-    Pipe pipe = new Pipe( name ); // this forces pipe-lining between the source and sink
+    Pipe pipe = new Pipe( getName() ); // this forces pipe-lining between the source and sink
 
-    return createFlowFrom( name, pipe );
+    return createFlowFrom( getName(), pipe );
     }
   }

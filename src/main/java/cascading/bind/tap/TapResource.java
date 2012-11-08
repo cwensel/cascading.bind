@@ -18,17 +18,19 @@
  * limitations under the License.
  */
 
-package cascading.bind;
+package cascading.bind.tap;
 
+import cascading.bind.catalog.Resource;
+import cascading.bind.catalog.Schema;
 import cascading.scheme.Scheme;
 import cascading.tap.SinkMode;
 import cascading.tap.Tap;
 
 /**
- * Class TapResource is an abstract base class to be used with the {@link Schema} class for dynamically
+ * Class TapResource is an abstract base class to be used with the {@link TapFactory} class for dynamically
  * looking up Cascading {@link Tap} instances based on a given 'protocol' and 'format'.
  * <p/>
- * TapResource extends {@link Resource} and binds {@link SinkMode} as the Resource 'mode' type.
+ * TapResource extends {@link cascading.bind.catalog.Resource} and binds {@link SinkMode} as the Resource 'mode' type.
  *
  * @param <Protocol> a 'protocol' type
  * @param <Format>   a data 'format' type
@@ -39,9 +41,9 @@ public abstract class TapResource<Protocol, Format> extends Resource<Protocol, F
     {
     }
 
-  public TapResource( String path, Protocol protocol, Format format, SinkMode mode )
+  public TapResource( String identifier, Protocol protocol, Format format, SinkMode mode )
     {
-    super( path, protocol, format, mode );
+    super( identifier, protocol, format, mode );
     }
 
   public String getSimpleIdentifier()
@@ -54,5 +56,15 @@ public abstract class TapResource<Protocol, Format> extends Resource<Protocol, F
     return name.substring( name.lastIndexOf( "/" ) + 1 );
     }
 
-  public abstract Tap createTapFor( Scheme scheme );
+  public Tap createTapFor( Schema<Protocol, Format> schema )
+    {
+    Scheme scheme = schema.getSchemeFor( getProtocol(), getFormat() );
+
+    if( scheme == null )
+      throw new IllegalArgumentException( "no scheme found for: " + this + " in schema: " + schema.getName() );
+
+    return createTapFor( scheme );
+    }
+
+  protected abstract Tap createTapFor( Scheme scheme );
   }
