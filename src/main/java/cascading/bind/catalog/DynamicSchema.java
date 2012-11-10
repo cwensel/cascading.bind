@@ -38,7 +38,7 @@ public class DynamicSchema<Protocol, Format> extends Schema<Protocol, Format>
    */
   public static interface SchemeFactory<Protocol, Format>
     {
-    Scheme createScheme( Protocol protocol, Format format );
+    Scheme createScheme( Protocol protocol, Format format, Fields fields );
     }
 
   public DynamicSchema( Protocol defaultProtocol, String name, Fields fields )
@@ -59,7 +59,7 @@ public class DynamicSchema<Protocol, Format> extends Schema<Protocol, Format>
     if( factory == null )
       return null;
 
-    return factory.createScheme( protocol, format );
+    return factory.createScheme( protocol, format, getFields() );
     }
 
   @Override
