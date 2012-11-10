@@ -64,18 +64,20 @@ artifacts {
 
 dependencies {
 
-  def cascadingVersion = '2.2.+'
+  def cascadingVersion = '2.1.+'
 
   compile group: 'cascading', name: 'cascading-core', version: cascadingVersion, changing: true
-  compile group: 'cascading', name: 'cascading-local', version: cascadingVersion, changing: true
-//  compile group: 'cascading', name: 'cascading-hadoop', version: cascadingVersion, changing: true
 
+  testCompile group: 'cascading', name: 'cascading-local', version: cascadingVersion, changing: true
   testCompile group: 'cascading', name: 'cascading-core', version: cascadingVersion, classifier: 'tests', changing: true
   testCompile group: 'cascading', name: 'cascading-local', version: cascadingVersion, classifier: 'tests', changing: true
-//  testCompile group: 'cascading', name: 'cascading-hadoop', version: cascadingVersion, classifier: 'tests', changing: true
   testCompile group: 'cascading', name: 'cascading-platform', version: cascadingVersion, classifier: 'tests', changing: true
 
   testCompile group: 'junit', name: 'junit', version: '4.8.+'
+}
+
+test {
+  include '**/*Test.class'
 }
 
 uploadArchives {
