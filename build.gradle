@@ -18,13 +18,11 @@
  * limitations under the License.
  */
 
-
-
-
-
 apply plugin: 'java'
 apply plugin: 'idea'
 apply plugin: 'maven'
+
+apply from: 'etc/properties.gradle'
 
 archivesBaseName = 'cascading-bind'
 group = 'cascading'
@@ -83,14 +81,8 @@ test {
   include '**/*Test.class'
 }
 
+// depends on etc/properties.gradle
 uploadArchives {
-
-  def repoUrl = 'http://conjars.org/repo/'
-  def repoUserName = System.properties[ 'publish.repo.userName' ]
-  def repoPassword = System.properties[ 'publish.repo.password' ]
-
-  if( System.properties[ 'publish.repo.url' ] )
-    repoUrl = System.properties[ 'publish.repo.url' ]
 
   repositories.mavenDeployer {
     configuration = configurations.archives
