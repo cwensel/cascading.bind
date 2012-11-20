@@ -21,7 +21,7 @@
 package cascading.bind.tap;
 
 import cascading.bind.catalog.Resource;
-import cascading.bind.catalog.Schema;
+import cascading.bind.catalog.Stereotype;
 import cascading.scheme.Scheme;
 import cascading.tap.SinkMode;
 import cascading.tap.Tap;
@@ -56,12 +56,12 @@ public abstract class TapResource<Protocol, Format> extends Resource<Protocol, F
     return name.substring( name.lastIndexOf( "/" ) + 1 );
     }
 
-  public Tap createTapFor( Schema<Protocol, Format> schema )
+  public Tap createTapFor( Stereotype<Protocol, Format> stereotype )
     {
-    Scheme scheme = schema.getSchemeFor( getProtocol(), getFormat() );
+    Scheme scheme = stereotype.getSchemeFor( getProtocol(), getFormat() );
 
     if( scheme == null )
-      throw new IllegalArgumentException( "no scheme found for: " + this + " in schema: " + schema.getName() );
+      throw new IllegalArgumentException( "no scheme found for: " + this + " in stereotype: " + stereotype.getName() );
 
     return createTapFor( scheme );
     }

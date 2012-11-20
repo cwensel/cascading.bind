@@ -20,18 +20,18 @@
 
 package cascading.bind;
 
-import cascading.bind.catalog.Schema;
+import cascading.bind.catalog.Stereotype;
 import cascading.scheme.local.TextLine;
 import cascading.tuple.Fields;
 
 /**
- * A mock Schema that represents a 'person' type.
+ * A mock Stereotype that represents a 'person' type.
  * <p/>
  * Note the constant fields which can be used inside a Cascading application.
  */
-public class CopySchema extends Schema<Protocol, Format>
+public class CopyStereotype extends Stereotype<Protocol, Format>
   {
-  protected CopySchema()
+  protected CopyStereotype()
     {
     super( Protocol.FILE );
 

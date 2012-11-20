@@ -44,8 +44,8 @@ public class TestCopyFactory extends FlowFactory
     {
     super( properties, name );
 
-    setSourceSchema( name, new CopySchema() );
-    setSinkSchema( name, new CopySchema() );
+    setSourceStereotype( name, new CopyStereotype() );
+    setSinkStereotype( name, new CopyStereotype() );
     }
 
   public void addSourceResource( TapResource resource )

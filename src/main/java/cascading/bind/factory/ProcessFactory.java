@@ -30,7 +30,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
-import cascading.bind.catalog.Schema;
+import cascading.bind.catalog.Stereotype;
 import cascading.bind.tap.TapResource;
 
 /**
@@ -43,8 +43,8 @@ import cascading.bind.tap.TapResource;
  */
 public abstract class ProcessFactory<Process, Resource extends TapResource> extends Factory<Process>
   {
-  final Map<String, Schema> sourceSchemas = new HashMap<String, Schema>();
-  final Map<String, Schema> sinkSchemas = new HashMap<String, Schema>();
+  final Map<String, Stereotype> sourceStereotypes = new HashMap<String, Stereotype>();
+  final Map<String, Stereotype> sinkStereotypes = new HashMap<String, Stereotype>();
   final Map<String, List<Resource>> sourceResources = new HashMap<String, List<Resource>>();
   final Map<String, List<Resource>> sinkResources = new HashMap<String, List<Resource>>();
 
@@ -58,51 +58,51 @@ public abstract class ProcessFactory<Process, Resource extends TapResource> exte
     }
 
   /**
-   * Method addSourceSchema binds a given {@link cascading.bind.tap.TapFactory} instance to the given 'name'.
+   * Method setSourceStereotype binds a given {@link cascading.bind.tap.TapFactory} instance to the given 'name'.
    * <p/>
-   * Only one Schema may be bound to a source name.
+   * Only one Stereotype may be bound to a source name.
    *
    * @param sourceName
-   * @param schema
+   * @param stereotype
    */
-  protected void setSourceSchema( String sourceName, Schema schema )
+  protected void setSourceStereotype( String sourceName, Stereotype stereotype )
     {
     if( sourceName == null || sourceName.isEmpty() )
       throw new IllegalArgumentException( "sourceName may not be null or empty" );
 
-    if( schema == null )
-      throw new IllegalArgumentException( "schema may not be null" );
+    if( stereotype == null )
+      throw new IllegalArgumentException( "stereotype may not be null" );
 
-    sourceSchemas.put( sourceName, schema );
+    sourceStereotypes.put( sourceName, stereotype );
     }
 
-  protected Schema getSourceSchema( String sourceName )
+  protected Stereotype getSourceStereotype( String sourceName )
     {
-    return sourceSchemas.get( sourceName );
+    return sourceStereotypes.get( sourceName );
     }
 
   /**
-   * Method addSinkSchema binds a given {@link cascading.bind.tap.TapFactory} instance to the given 'name'.
+   * Method setSinkStereotype binds a given {@link cascading.bind.tap.TapFactory} instance to the given 'name'.
    * <p/>
-   * Only one Schema may be bound to a sink name.
+   * Only one Stereotype may be bound to a sink name.
    *
    * @param sinkName
-   * @param schema
+   * @param stereotype
    */
-  protected void setSinkSchema( String sinkName, Schema schema )
+  protected void setSinkStereotype( String sinkName, Stereotype stereotype )
     {
     if( sinkName == null || sinkName.isEmpty() )
       throw new IllegalArgumentException( "sinkName may not be null or empty" );
 
-    if( schema == null )
-      throw new IllegalArgumentException( "schema may not be null" );
+    if( stereotype == null )
+      throw new IllegalArgumentException( "stereotype may not be null" );
 
-    sinkSchemas.put( sinkName, schema );
+    sinkStereotypes.put( sinkName, stereotype );
     }
 
-  protected Schema getSinkSchema( String sinkName )
+  protected Stereotype getSinkStereotype( String sinkName )
     {
-    return sinkSchemas.get( sinkName );
+    return sinkStereotypes.get( sinkName );
     }
 
   /**
@@ -175,9 +175,9 @@ public abstract class ProcessFactory<Process, Resource extends TapResource> exte
     sourceResources.clear();
     }
 
-  public Schema getSourceSchemaFor( TapResource resource )
+  public Stereotype getSourceStereotypeFor( TapResource resource )
     {
-    return getSchemaFor( resource, sourceResources, sourceSchemas );
+    return getStereotypeFor( resource, sourceResources, sourceStereotypes );
     }
 
   /**
@@ -268,12 +268,12 @@ public abstract class ProcessFactory<Process, Resource extends TapResource> exte
     return found;
     }
 
-  public Schema getSinkSchemaFor( TapResource resource )
+  public Stereotype getSinkStereotypeFor( TapResource resource )
     {
-    return getSchemaFor( resource, sinkResources, sinkSchemas );
+    return getStereotypeFor( resource, sinkResources, sinkStereotypes );
     }
 
-  private Schema getSchemaFor( TapResource resource, Map<String, List<Resource>> resources, Map<String, Schema> schemas )
+  private Stereotype getStereotypeFor( TapResource resource, Map<String, List<Resource>> resources, Map<String, Stereotype> stereotypes )
     {
     String name = null;
 
@@ -289,7 +289,7 @@ public abstract class ProcessFactory<Process, Resource extends TapResource> exte
     if( name == null )
       return null;
 
-    return schemas.get( name );
+    return stereotypes.get( name );
     }
 
   protected Collection<String> getSourceNames()

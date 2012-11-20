@@ -32,10 +32,10 @@ import junit.framework.Assert;
  */
 public class SimpleTest extends CascadingTestCase
   {
-  public void testSchema()
+  public void testStereotype()
     {
-    PersonSchema schema = new PersonSchema();
-    TapFactory tapFactory = new TapFactory( schema );
+    PersonStereotype stereotype = new PersonStereotype();
+    TapFactory tapFactory = new TapFactory( stereotype );
 
     Assert.assertNotNull( tapFactory.getTapFor( new ConversionResource( "foo", Protocol.FILE, Format.TSV ) ) );
     Assert.assertNotNull( tapFactory.getTapFor( new ConversionResource( "foo", Protocol.HTTP, Format.JSON ) ) );
@@ -43,7 +43,7 @@ public class SimpleTest extends CascadingTestCase
 
   public void testFlowFactory()
     {
-    CSVToTSVFactory factory = new CSVToTSVFactory( "convert", new PersonSchema() );
+    CSVToTSVFactory factory = new CSVToTSVFactory( "convert", new PersonStereotype() );
 
     factory.setSource( Protocol.FILE, "some/path" );
     factory.setSink( Protocol.HTTP, "http://some/place" );
@@ -60,15 +60,15 @@ public class SimpleTest extends CascadingTestCase
   public void testCascadeFactory()
     {
     // these factories read from the same location, but pretend they do something different
-    CSVToTSVFactory factory1 = new CSVToTSVFactory( "convert1", new PersonSchema() );
+    CSVToTSVFactory factory1 = new CSVToTSVFactory( "convert1", new PersonStereotype() );
     factory1.setSource( Protocol.FILE, "some/remote/path" );
     factory1.setSink( Protocol.FILE, "some/place/first" );
 
-    CSVToTSVFactory factory2 = new CSVToTSVFactory( "convert2", new PersonSchema() );
+    CSVToTSVFactory factory2 = new CSVToTSVFactory( "convert2", new PersonStereotype() );
     factory2.setSource( Protocol.FILE, "some/remote/path" );
     factory2.setSink( Protocol.FILE, "some/place/second" );
 
-    CSVToTSVFactory factory3 = new CSVToTSVFactory( "convert3", new PersonSchema() );
+    CSVToTSVFactory factory3 = new CSVToTSVFactory( "convert3", new PersonStereotype() );
     factory3.setSource( Protocol.FILE, "some/remote/path" );
     factory3.setSink( Protocol.FILE, "some/place/third" );
 

@@ -28,25 +28,38 @@ import cascading.tuple.Fields;
 /**
  *
  */
-public abstract class Catalog<Protocol, Format>
+public class Catalog<Protocol, Format>
   {
-  Map<Fields, Schema> schemas = new HashMap<Fields, Schema>();
+  Map<String, Stereotype> nameToStereotype = new HashMap<String, Stereotype>();
+  Map<Fields, Stereotype> fieldsToStereotype = new HashMap<Fields, Stereotype>();
 
-  protected Catalog()
+  public Catalog()
     {
     }
 
-  public Schema<Protocol, Format> getSchemaFor( Fields fields )
+  public Stereotype<Protocol, Format> getStereotypeFor( String name )
     {
-    return schemas.get( normalize( fields ) );
+    if( name == null || name.isEmpty() )
+      throw new IllegalArgumentException( "name may not be null" );
+
+    return fieldsToStereotype.get( name );
     }
 
-  protected void addSchema( Schema<Protocol, Format> schema )
+  public Stereotype<Protocol, Format> getStereotypeFor( Fields fields )
     {
-    if( schemas.containsKey( schema.getFields() ) )
-      throw new IllegalStateException( "catalog already contains schema for: " + schema.getFields() + ", named: " + schemas.get( schema.getFields() ).getName() );
+    return fieldsToStereotype.get( normalize( fields ) );
+    }
 
-    schemas.put( schema.getFields(), schema );
+  public void addStereotype( Stereotype<Protocol, Format> stereotype )
+    {
+    if( nameToStereotype.containsKey( stereotype.getName() ) )
+      throw new IllegalArgumentException( "catalog already contains stereotype for: " + stereotype.getName() + ", with fields: " + nameToStereotype.get( stereotype.getName() ).getFields() );
+
+    if( fieldsToStereotype.containsKey( stereotype.getFields() ) )
+      throw new IllegalArgumentException( "catalog already contains stereotype for: " + stereotype.getFields() + ", named: " + fieldsToStereotype.get( stereotype.getFields() ).getName() );
+
+    nameToStereotype.put( stereotype.getName(), stereotype );
+    fieldsToStereotype.put( stereotype.getFields(), stereotype );
     }
 
   private Fields normalize( Fields fields )

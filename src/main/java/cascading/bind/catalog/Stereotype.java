@@ -30,7 +30,7 @@ import cascading.scheme.Scheme;
 import cascading.tuple.Fields;
 
 /**
- * Class Schema is used to map between 'protocols' and 'formats' to available Cascading Scheme instances.
+ * Class Stereotype is used to map between 'protocols' and 'formats' to available Cascading Scheme instances.
  * <p/>
  * This is particularly useful when creating data processing applications that need to deal with
  * multiple data formats for data (tab delimited, JSON, thrift, etc) and multiple ways to access the data
@@ -39,25 +39,25 @@ import cascading.tuple.Fields;
  * This class is type parameterized for P and F where P represent a 'protocol' and F represents
  * a file or data 'format'. Typically P and F are of type {@link Enum}, but may be any standard class.
  * <p/>
- * It is a common practice to sub-class Schema so that each new class represents a particular abstract
+ * It is a common practice to sub-class Stereotype so that each new class represents a particular abstract
  * data type like 'person' or an Apache server log record.
  *
  * @param <Protocol> a 'protocol' type
  * @param <Format>   a data 'format' type
  */
-public class Schema<Protocol, Format>
+public class Stereotype<Protocol, Format>
   {
-  String name = getClass().getSimpleName().replaceAll( "Schema$", "" );
+  String name = getClass().getSimpleName().replaceAll( "Stereotype$", "" );
   Protocol defaultProtocol;
   Fields fields;
   final Map<Point, Scheme> schemes = new HashMap<Point, Scheme>();
 
-  public Schema( Protocol defaultProtocol )
+  public Stereotype( Protocol defaultProtocol )
     {
     this( defaultProtocol, null, null );
     }
 
-  public Schema( Protocol defaultProtocol, String name, Fields fields )
+  public Stereotype( Protocol defaultProtocol, String name, Fields fields )
     {
     this.defaultProtocol = defaultProtocol;
     this.name = name == null ? this.name : name;
@@ -94,7 +94,7 @@ public class Schema<Protocol, Format>
       if( fields == null )
         fields = scheme.getSourceFields();
       else if( !fields.equals( scheme.getSourceFields() ) )
-        throw new IllegalArgumentException( "all schemes added to schema must have the same source fields, expected: " + fields + ", received: " + scheme.getSourceFields() + " in schema: " + getName() );
+        throw new IllegalArgumentException( "all schemes added to stereotype must have the same source fields, expected: " + fields + ", received: " + scheme.getSourceFields() + " in stereotype: " + getName() );
       }
 
     if( scheme.isSink() )
@@ -102,7 +102,7 @@ public class Schema<Protocol, Format>
       if( fields == null )
         fields = scheme.getSinkFields();
       else if( !fields.equals( scheme.getSinkFields() ) )
-        throw new IllegalArgumentException( "all schemes added to schema must have the same sink fields, expected: " + fields + ", received: " + scheme.getSinkFields() + " in schema: " + getName() );
+        throw new IllegalArgumentException( "all schemes added to stereotype must have the same sink fields, expected: " + fields + ", received: " + scheme.getSinkFields() + " in stereotype: " + getName() );
       }
     }
 
@@ -183,9 +183,9 @@ public class Schema<Protocol, Format>
     if( object == null || getClass() != object.getClass() )
       return false;
 
-    Schema schema = (Schema) object;
+    Stereotype stereotype = (Stereotype) object;
 
-    if( fields != null ? !fields.equals( schema.fields ) : schema.fields != null )
+    if( fields != null ? !fields.equals( stereotype.fields ) : stereotype.fields != null )
       return false;
 
     return true;

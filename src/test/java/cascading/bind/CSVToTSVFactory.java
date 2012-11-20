@@ -22,7 +22,7 @@ package cascading.bind;
 
 import java.util.Properties;
 
-import cascading.bind.catalog.Schema;
+import cascading.bind.catalog.Stereotype;
 import cascading.bind.factory.FlowFactory;
 import cascading.flow.Flow;
 import cascading.flow.FlowConnector;
@@ -37,28 +37,28 @@ public class CSVToTSVFactory extends FlowFactory
   {
   private boolean hasHeaders;
 
-  public CSVToTSVFactory( String name, Schema schema )
+  public CSVToTSVFactory( String name, Stereotype stereotype )
     {
-    this( name, schema, false );
+    this( name, stereotype, false );
     }
 
-  public CSVToTSVFactory( String name, Schema schema, boolean hasHeaders )
+  public CSVToTSVFactory( String name, Stereotype stereotype, boolean hasHeaders )
     {
-    this( null, name, schema, hasHeaders );
+    this( null, name, stereotype, hasHeaders );
     }
 
-  public CSVToTSVFactory( Properties properties, String name, Schema schema, boolean hasHeaders )
+  public CSVToTSVFactory( Properties properties, String name, Stereotype stereotype, boolean hasHeaders )
     {
     super( properties, name );
     this.hasHeaders = hasHeaders;
 
-    setSourceSchema( name, schema );
-    setSinkSchema( name, schema );
+    setSourceStereotype( name, stereotype );
+    setSinkStereotype( name, stereotype );
     }
 
   public void setSource( String path )
     {
-    setSource( (Protocol) getSourceSchema( getName() ).getDefaultProtocol(), path );
+    setSource( (Protocol) getSourceStereotype( getName() ).getDefaultProtocol(), path );
     }
 
   public void setSource( Protocol protocol, String path )
@@ -68,7 +68,7 @@ public class CSVToTSVFactory extends FlowFactory
 
   public void setSink( String path )
     {
-    setSink( (Protocol) getSinkSchema( getName() ).getDefaultProtocol(), path );
+    setSink( (Protocol) getSinkStereotype( getName() ).getDefaultProtocol(), path );
     }
 
   public void setSink( Protocol protocol, String path )

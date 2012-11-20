@@ -20,18 +20,18 @@
 
 package cascading.bind;
 
-import cascading.bind.catalog.Schema;
+import cascading.bind.catalog.Stereotype;
 import cascading.bind.tap.JDBCScheme;
 import cascading.bind.tap.JSONScheme;
 import cascading.scheme.local.TextDelimited;
 import cascading.tuple.Fields;
 
 /**
- * A mock Schema that represents a 'person' type.
+ * A mock Stereotype that represents a 'person' type.
  * <p/>
  * Note the constant fields which can be used inside a Cascading application.
  */
-public class PersonSchema extends Schema<Protocol, Format>
+public class PersonStereotype extends Stereotype<Protocol, Format>
   {
   public static final Fields FIRST = new Fields( "firstName" );
   public static final Fields LAST = new Fields( "lastName" );
@@ -39,7 +39,7 @@ public class PersonSchema extends Schema<Protocol, Format>
 
   public static final Fields FIELDS = FIRST.append( LAST ).append( ADDRESS );
 
-  public PersonSchema()
+  public PersonStereotype()
     {
     super( Protocol.FILE );
 

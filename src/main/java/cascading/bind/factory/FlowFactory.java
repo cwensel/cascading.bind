@@ -27,7 +27,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
-import cascading.bind.catalog.Schema;
+import cascading.bind.catalog.Stereotype;
 import cascading.bind.tap.TapFactory;
 import cascading.bind.tap.TapResource;
 import cascading.cascade.Cascades;
@@ -80,10 +80,10 @@ public abstract class FlowFactory extends ProcessFactory<Flow, TapResource>
    */
   public Tap getSourceTapFor( String sourceName )
     {
-    TapFactory factory = getTapFactory( sourceSchemas.get( sourceName ) );
+    TapFactory factory = getTapFactory( sourceStereotypes.get( sourceName ) );
 
     if( factory == null )
-      throw new IllegalArgumentException( "could not find schema for source name: " + sourceName );
+      throw new IllegalArgumentException( "could not find stereotype for source name: " + sourceName );
 
     return getSourceTapFor( sourceName, factory );
     }
@@ -120,10 +120,10 @@ public abstract class FlowFactory extends ProcessFactory<Flow, TapResource>
    */
   public Tap getSinkTapFor( String sinkName )
     {
-    TapFactory factory = getTapFactory( sinkSchemas.get( sinkName ) );
+    TapFactory factory = getTapFactory( sinkStereotypes.get( sinkName ) );
 
     if( factory == null )
-      throw new IllegalArgumentException( "could not find schema for sink name: " + sinkName );
+      throw new IllegalArgumentException( "could not find stereotype for sink name: " + sinkName );
 
     return getSinkTapFor( sinkName, factory );
     }
@@ -146,9 +146,9 @@ public abstract class FlowFactory extends ProcessFactory<Flow, TapResource>
     return new MultiSinkTap( taps );
     }
 
-  private TapFactory getTapFactory( Schema schema )
+  private TapFactory getTapFactory( Stereotype stereotype )
     {
-    return new TapFactory( schema );
+    return new TapFactory( stereotype );
     }
 
   protected Tap[] getSourceTapsFor( String... sourceNames )

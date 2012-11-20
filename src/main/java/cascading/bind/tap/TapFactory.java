@@ -20,7 +20,7 @@
 
 package cascading.bind.tap;
 
-import cascading.bind.catalog.Schema;
+import cascading.bind.catalog.Stereotype;
 import cascading.tap.MultiSinkTap;
 import cascading.tap.MultiSourceTap;
 import cascading.tap.Tap;
@@ -28,16 +28,16 @@ import cascading.tap.Tap;
 
 public class TapFactory<Protocol, Format>
   {
-  protected final Schema<Protocol, Format> schema;
+  protected final Stereotype<Protocol, Format> stereotype;
 
-  public TapFactory( Schema schema )
+  public TapFactory( Stereotype stereotype )
     {
-    this.schema = schema;
+    this.stereotype = stereotype;
     }
 
   public Tap getTapFor( TapResource<Protocol, Format> resource )
     {
-    return resource.createTapFor( schema );
+    return resource.createTapFor( stereotype );
     }
 
   public Tap getSourceTapFor( TapResource<Protocol, Format>... resources )

@@ -29,7 +29,7 @@ import cascading.tuple.Fields;
 /**
  *
  */
-public class DynamicSchema<Protocol, Format> extends Schema<Protocol, Format>
+public class DynamicStereotype<Protocol, Format> extends Stereotype<Protocol, Format>
   {
   Map<Point, SchemeFactory> factoryMap = new HashMap<Point, SchemeFactory>();
 
@@ -41,7 +41,7 @@ public class DynamicSchema<Protocol, Format> extends Schema<Protocol, Format>
     Scheme createScheme( Protocol protocol, Format format, Fields fields );
     }
 
-  public DynamicSchema( Protocol defaultProtocol, String name, Fields fields )
+  public DynamicStereotype( Protocol defaultProtocol, String name, Fields fields )
     {
     super( defaultProtocol, name, fields );
     }
