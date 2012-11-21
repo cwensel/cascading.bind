@@ -20,6 +20,8 @@
 
 package cascading.bind.catalog;
 
+import java.io.Serializable;
+
 /**
  * Class Resource represents an referenceable and identifiable data resource that has a 'protocol', 'format', and optionally a access 'mode'
  * associated with it.
@@ -29,7 +31,7 @@ package cascading.bind.catalog;
  * @param <Mode>     a access 'mode' type
  * @see cascading.bind.tap.TapResource
  */
-public class Resource<Protocol, Format, Mode>
+public class Resource<Protocol, Format, Mode> implements Serializable
   {
   private String identifier;
   private Protocol protocol;

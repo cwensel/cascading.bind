@@ -20,6 +20,7 @@
 
 package cascading.bind.catalog;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -28,10 +29,10 @@ import cascading.tuple.Fields;
 /**
  *
  */
-public class Catalog<Protocol, Format>
+public class Catalog<Protocol, Format> implements Serializable
   {
-  Map<String, Stereotype> nameToStereotype = new HashMap<String, Stereotype>();
-  Map<Fields, Stereotype> fieldsToStereotype = new HashMap<Fields, Stereotype>();
+  Map<String, Stereotype<Protocol, Format>> nameToStereotype = new HashMap<String, Stereotype<Protocol, Format>>();
+  Map<Fields, Stereotype<Protocol, Format>> fieldsToStereotype = new HashMap<Fields, Stereotype<Protocol, Format>>();
 
   public Catalog()
     {
@@ -42,7 +43,7 @@ public class Catalog<Protocol, Format>
     if( name == null || name.isEmpty() )
       throw new IllegalArgumentException( "name may not be null" );
 
-    return fieldsToStereotype.get( name );
+    return nameToStereotype.get( name );
     }
 
   public Stereotype<Protocol, Format> getStereotypeFor( Fields fields )

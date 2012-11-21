@@ -20,6 +20,7 @@
 
 package cascading.bind.catalog;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -45,7 +46,7 @@ import cascading.tuple.Fields;
  * @param <Protocol> a 'protocol' type
  * @param <Format>   a data 'format' type
  */
-public class Stereotype<Protocol, Format>
+public class Stereotype<Protocol, Format> implements Serializable
   {
   String name = getClass().getSimpleName().replaceAll( "Stereotype$", "" );
   Protocol defaultProtocol;

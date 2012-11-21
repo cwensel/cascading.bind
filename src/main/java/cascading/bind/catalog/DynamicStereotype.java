@@ -20,6 +20,7 @@
 
 package cascading.bind.catalog;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -36,7 +37,7 @@ public class DynamicStereotype<Protocol, Format> extends Stereotype<Protocol, Fo
   /**
    *
    */
-  public static interface SchemeFactory<Protocol, Format>
+  public static interface SchemeFactory<Protocol, Format> extends Serializable
     {
     Scheme createScheme( Protocol protocol, Format format, Fields fields );
     }

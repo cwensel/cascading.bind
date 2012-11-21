@@ -20,10 +20,12 @@
 
 package cascading.bind.catalog;
 
+import java.io.Serializable;
+
 /**
  *
  */
-public class Point<Protocol, Format>
+public class Point<Protocol, Format> implements Serializable
   {
   public final Protocol protocol;
   public final Format format;
